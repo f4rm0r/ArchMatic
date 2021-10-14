@@ -92,6 +92,6 @@ cp -R ~/ArchMatic /mnt/root/
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR 0-setup       --"
 echo "--------------------------------------"
-arch-chroot /mnt && sh /root/0-setup.sh
+arch-chroot /mnt sh /root/ArchMatic/0-setup.sh
 
 ) 2>&1 | tee installlog.txt
