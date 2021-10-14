@@ -56,8 +56,8 @@ PKGS=(
 'gparted' # partition management
 'gptfdisk'
 'groff'
-'grub'
-'grub-customizer'
+#'grub'
+#'grub-customizer'
 'gst-libav'
 'gst-plugins-good'
 'gst-plugins-ugly'
@@ -209,3 +209,5 @@ then
 else
 	echo "You are already a user proceed with aur installs"
 fi
+
+sh /root/3-software-aur.sh

@@ -9,13 +9,13 @@
 (
 
 echo "-------------------------------------------------"
-echo "Setting up mirrors for optimal download - US Only"
+echo "Setting up mirrors for optimal download - SE,FI,DK,NO Only"
 echo "-------------------------------------------------"
 timedatectl set-ntp true
 pacman -S --noconfirm pacman-contrib
 pacman -S --noconfirm reflector rsync
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-reflector -a 48 -c us -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector -a 48 -c se,jp,fi,dk,no -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt
 
 
@@ -38,6 +38,7 @@ echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
 
 # disk prep
+wipefs -a -t ${DISK} # removes all of the btrfs signatures and wipe disk clean
 sgdisk -Z ${DISK} # zap all on disk
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
@@ -91,6 +92,6 @@ cp -R ~/ArchMatic /mnt/root/
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR 0-setup       --"
 echo "--------------------------------------"
-arch-chroot /mnt
+arch-chroot /mnt && sh /root/0-setup.sh
 
 ) 2>&1 | tee installlog.txt

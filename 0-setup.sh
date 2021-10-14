@@ -36,7 +36,7 @@ echo "-------------------------------------------------"
 pacman -S --noconfirm pacman-contrib curl
 pacman -S --noconfirm reflector rsync
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
-reflector -a 48 -c us -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector -a 48 -c se,jp,fi,dk,no -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo "You have " $nc" cores."
@@ -70,5 +70,8 @@ Include = /etc/pacman.d/mirrorlist
 EOF
 pacman -Sy --noconfirm
 
+echo "-------------------------------------------------"
+echo "       Now starting next step                    "
+echo "-------------------------------------------------"
 
-
+sh /root/1-base.sh
