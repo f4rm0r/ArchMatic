@@ -52,6 +52,7 @@ sgdisk -t 2:8300 ${DISK}
 # label partitions
 sgdisk -c 1:"UEFISYS" ${DISK}
 sgdisk -c 2:"ROOT" ${DISK}
+wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe disk clean
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
@@ -61,7 +62,6 @@ mkfs.btrfs -L "ROOT" "${DISK}2"
 mount -t btrfs "${DISK}2" /mnt
 btrfs subvolume create /mnt/@
 umount /mnt
-wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe disk clean
 ;;
 esac
 
@@ -92,6 +92,6 @@ cp -R ~/ArchMatic /mnt/root/
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR 0-setup       --"
 echo "--------------------------------------"
-arch-chroot /mnt && sh /root/ArchMatic/0-setup.sh
+arch-chroot /mnt && sh /root/0-setup.sh
 
 ) 2>&1 | tee installlog.txt
