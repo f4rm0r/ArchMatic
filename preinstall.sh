@@ -52,7 +52,7 @@ sgdisk -t 2:8300 ${DISK}
 # label partitions
 sgdisk -c 1:"UEFISYS" ${DISK}
 sgdisk -c 2:"ROOT" ${DISK}
-wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe disk clean
+wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe partition clean
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
