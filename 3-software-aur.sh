@@ -26,12 +26,15 @@ PKGS=(
 'mangohud-common'
 'ocs-url' # install packages from websites
 'zoom' # video conferences
+'snapd' # snap store
 )
 
 
 for PKG in "${PKGS[@]}"; do
     yay -S --noconfirm $PKG
 done
+
+snap install openra
 
 echo -e "\nDone!\n"
 echo -e "Restart and run sudo /root/ArchMatic/9-post-setup.sh"
