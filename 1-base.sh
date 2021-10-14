@@ -207,7 +207,5 @@ then
     su $username
     echo "Switched to user mode"
 else
-	echo "You are already a user proceed with aur installs"
+	echo "You are already a user proceed with aur install with 3-software-aur.sh"
 fi
-
-sh /root/3-software-aur.sh

@@ -72,8 +72,4 @@ Include = /etc/pacman.d/mirrorlist
 EOF
 pacman -Sy --noconfirm
 
-echo "-------------------------------------------------"
-echo "       Now starting next step                    "
-echo "-------------------------------------------------"
-
-sh ./1-base.sh
+echo -e "ready for 1-base.sh"

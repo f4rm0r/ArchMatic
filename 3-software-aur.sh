@@ -34,4 +34,4 @@ for PKG in "${PKGS[@]}"; do
 done
 
 echo -e "\nDone!\n"
-echo -e "Restart and run sudo /root/9-post-setup.sh"
+echo -e "Restart and run sudo /root/ArchMatic/9-post-setup.sh"
