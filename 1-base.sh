@@ -56,8 +56,8 @@ PKGS=(
 'gparted' # partition management
 'gptfdisk'
 'groff'
-'grub'
-'grub-customizer'
+#'grub'
+#'grub-customizer'
 'gst-libav'
 'gst-plugins-good'
 'gst-plugins-ugly'
@@ -119,6 +119,7 @@ PKGS=(
 'neofetch'
 'networkmanager'
 'ntfs-3g'
+'nvidia-dkms'
 'okular'
 'openbsd-netcat'
 'openssh'
@@ -190,6 +191,9 @@ done
 
 echo -e "\nDone!\n"
 
+touch /etc/modprobe.d/blacklist.conf
+echo -e "blacklist nouveau" >> /etc/pacman.d/blacklist.conf
+
 if [ $(whoami) = "root"  ];
 then
     [ ! -d "/home/$username" ] && useradd -m -g users -G wheel -s /bin/bash $username 
@@ -207,5 +211,5 @@ then
     su $username
     echo "Switched to user mode"
 else
-	echo "You are already a user proceed with aur installs"
+	echo "You are already a user proceed with aur install with 3-software-aur.sh"
 fi

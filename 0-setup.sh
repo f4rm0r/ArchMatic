@@ -31,12 +31,12 @@ if ! source install.conf; then
 fi
 
 echo "-------------------------------------------------"
-echo "Setting up mirrors for optimal download - US Only"
+echo "Setting up mirrors for optimal download - SE,FI,DK,NO Only"
 echo "-------------------------------------------------"
 pacman -S --noconfirm pacman-contrib curl
 pacman -S --noconfirm reflector rsync
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
-reflector -a 48 -c us -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector -a 48 -c se,jp,fi,dk,no -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo "You have " $nc" cores."
@@ -51,12 +51,12 @@ echo "       Setup Language to US and set locale       "
 echo "-------------------------------------------------"
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
-timedatectl --no-ask-password set-timezone America/Chicago
+timedatectl --no-ask-password set-timezone Europe/Stockholm
 timedatectl --no-ask-password set-ntp 1
 localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_COLLATE="" LC_TIME="en_US.UTF-8"
 
 # Set keymaps
-localectl --no-ask-password set-keymap us
+localectl --no-ask-password set-keymap se
 
 # Hostname
 hostnamectl --no-ask-password set-hostname $hostname
@@ -74,5 +74,4 @@ Include = /etc/pacman.d/mirrorlist
 EOF
 pacman -Sy --noconfirm
 
-
-
+echo -e "ready for 1-base.sh"
