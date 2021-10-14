@@ -31,7 +31,7 @@ if ! source install.conf; then
 fi
 
 echo "-------------------------------------------------"
-echo "Setting up mirrors for optimal download - US Only"
+echo "Setting up mirrors for optimal download - SE,FI,DK,NO Only"
 echo "-------------------------------------------------"
 pacman -S --noconfirm pacman-contrib curl
 pacman -S --noconfirm reflector rsync
@@ -51,7 +51,7 @@ echo "       Setup Language to US and set locale       "
 echo "-------------------------------------------------"
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
-timedatectl --no-ask-password set-timezone America/Chicago
+timedatectl --no-ask-password set-timezone Europe/Stockholm
 timedatectl --no-ask-password set-ntp 1
 localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_COLLATE="" LC_TIME="en_US.UTF-8"
 
@@ -63,6 +63,8 @@ hostnamectl --no-ask-password set-hostname $hostname
 
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+
+# Adding parallel downloading and multilib
 sed -i 's/^#Para/Para/' /etc/pacman.conf
 cat <<EOF >> /etc/pacman.conf
 [multilib]
@@ -74,4 +76,4 @@ echo "-------------------------------------------------"
 echo "       Now starting next step                    "
 echo "-------------------------------------------------"
 
-sh /root/1-base.sh
+sh ./1-base.sh
