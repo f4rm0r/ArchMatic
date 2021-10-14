@@ -38,7 +38,6 @@ echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
 
 # disk prep
-wipefs -a -t ${DISK} # removes all of the btrfs signatures and wipe disk clean
 sgdisk -Z ${DISK} # zap all on disk
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
@@ -62,6 +61,7 @@ mkfs.btrfs -L "ROOT" "${DISK}2"
 mount -t btrfs "${DISK}2" /mnt
 btrfs subvolume create /mnt/@
 umount /mnt
+wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe disk clean
 ;;
 esac
 
