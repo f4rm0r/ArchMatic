@@ -190,6 +190,9 @@ done
 
 echo -e "\nDone!\n"
 
+touch /etc/modprobe.d/blacklist.conf
+echo -e "blacklist nouveau" >> /etc/pacman.d/blacklist.conf
+
 if [ $(whoami) = "root"  ];
 then
     [ ! -d "/home/$username" ] && useradd -m -g users -G wheel -s /bin/bash $username 
