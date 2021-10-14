@@ -56,7 +56,7 @@ timedatectl --no-ask-password set-ntp 1
 localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_COLLATE="" LC_TIME="en_US.UTF-8"
 
 # Set keymaps
-localectl --no-ask-password set-keymap us
+localectl --no-ask-password set-keymap se
 
 # Hostname
 hostnamectl --no-ask-password set-hostname $hostname
