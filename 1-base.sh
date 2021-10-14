@@ -119,6 +119,7 @@ PKGS=(
 'neofetch'
 'networkmanager'
 'ntfs-3g'
+'nvidia-dkms'
 'okular'
 'openbsd-netcat'
 'openssh'
