@@ -9,13 +9,19 @@
 (
 
 echo "-------------------------------------------------"
+echo "-       Getting ISO code from ifconfig.co       -"
+echo "-------------------------------------------------"
+iso=$(curl -4 ifconfig.co/country-iso)
+
+
+
+echo "-------------------------------------------------"
 echo "Setting up mirrors for optimal download - SE,FI,DK,NO Only"
 echo "-------------------------------------------------"
 timedatectl set-ntp true
 pacman -S --noconfirm pacman-contrib
 pacman -S --noconfirm reflector rsync
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-reflector -a 48 -c se,jp,fi,dk,no -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt
 
 
@@ -52,7 +58,10 @@ sgdisk -t 2:8300 ${DISK}
 # label partitions
 sgdisk -c 1:"UEFISYS" ${DISK}
 sgdisk -c 2:"ROOT" ${DISK}
-wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe partition clean
+wipefs -a -t btrfs ${DISK}2 # remFile filter 
+Conversations 
+Jump to 
+ 1oves all of the btrfs signatures and wipe partition clean
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
