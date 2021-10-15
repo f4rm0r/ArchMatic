@@ -53,7 +53,7 @@ sgdisk -t 2:8300 ${DISK}
 # label partitions
 sgdisk -c 1:"UEFISYS" ${DISK}
 sgdisk -c 2:"ROOT" ${DISK}
-wipefs -a -t btrfs ${DISK}2 # remFile filter 
+wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe partition clean 
 Conversations 
 Jump to 
  1oves all of the btrfs signatures and wipe partition clean
