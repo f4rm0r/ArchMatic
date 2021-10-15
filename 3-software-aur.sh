@@ -34,7 +34,11 @@ for PKG in "${PKGS[@]}"; do
     yay -S --noconfirm $PKG
 done
 
-snap install openra
+# Enable and start snapstore
+
+sudo systemctl enable --now snapd.service
+sudo snap install openra
+
 
 echo -e "\nDone!\n"
 echo -e "Restart and run sudo /root/ArchMatic/9-post-setup.sh"
