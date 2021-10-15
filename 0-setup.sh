@@ -31,13 +31,13 @@ if ! source install.conf; then
 fi
 
 echo "-------------------------------------------------"
-echo "Setting up mirrors for optimal download"
+echo "Setting up mirrors for optimal download          "
 echo "-------------------------------------------------"
 pacman -S --noconfirm pacman-contrib curl
 pacman -S --noconfirm reflector rsync
 iso=$(curl -4 ifconfig.co/country-iso)
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
-reflector -a 48 -c se,jp,fi,dk,no -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo "You have " $nc" cores."
