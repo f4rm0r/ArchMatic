@@ -45,6 +45,10 @@ for PKG in "${PKGS[@]}"; do
     yay -S --noconfirm $PKG
 done
 
+# Enable and start snapstore
+
+sudo systemctl enable --now snapd.service
+sudo snap install openra
 
 echo -e "\nDone!\n"
 exit
