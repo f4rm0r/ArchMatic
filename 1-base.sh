@@ -67,6 +67,7 @@ PKGS=(
 'jdk-openjdk' # Java 17
 'kactivitymanagerd'
 'kate'
+'kvantum-qt5'
 'kcalc'
 'kcharselect'
 'kcron'
@@ -128,6 +129,7 @@ PKGS=(
 'p7zip'
 'pacman-contrib'
 'patch'
+'picom'
 'pkgconf'
 'plasma-browser-integration'
 'plasma-desktop'
@@ -182,6 +184,9 @@ PKGS=(
 'xorg-xinit'
 'zeroconf-ioslave'
 'zip'
+'zsh'
+'zsh-syntax-highlighting'
+'zsh-autosuggestions'
 )
 
 for PKG in "${PKGS[@]}"; do
@@ -205,10 +210,10 @@ then
     passwd $username
     cp /etc/skel/.bash_profile /home/$username/
     cp /etc/skel/.bash_logout /home/$username/
-    cp ~/ArchMatic/.bashrc /home/$username/.bashrc
-    cp ~/ArchMatic/.bashrc /root/.bashrc
+    cp /etc/skel/.bashrc /home/$username/.bashrc
     chown -R $username: /home/$username
-    su $username
+    sed -n '#/home/'"$username"'/#,s#bash#zsh#' /etc/passwd
+    su - $username
     echo "Switched to user mode"
 else
 	echo "You are already a user proceed with aur install with 3-software-aur.sh"

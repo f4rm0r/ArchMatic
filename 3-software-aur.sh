@@ -27,11 +27,15 @@ PKGS=(
 'lightly-git'
 'lightlyshaders-git'
 'github-desktop-bin' # Github Desktop sync
+'lightly-git'
+'lightlyshaders-git'
 'mangohud' # Gaming FPS Counter
 'mangohud-common'
 'timeshift-bin'
 'ttf-meslo' # Nerdfont package
 'ocs-url' # install packages from websites
+'timeshift-bin'
+'ttf-meslo' # Nerdfont package
 'zoom' # video conferences
 'autojump'
 )
