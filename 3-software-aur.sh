@@ -45,5 +45,6 @@ for PKG in "${PKGS[@]}"; do
     yay -S --noconfirm $PKG
 done
 
+
 echo -e "\nDone!\n"
 exit

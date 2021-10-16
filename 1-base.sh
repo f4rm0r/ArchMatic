@@ -196,8 +196,10 @@ done
 
 echo -e "\nDone!\n"
 
+# Blacklists Nvidia Nouveau module on boot
+
 touch /etc/modprobe.d/blacklist.conf
-echo -e "blacklist nouveau" >> /etc/pacman.d/blacklist.conf
+echo -e "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 
 if [ $(whoami) = "root"  ];
 then
