@@ -6,14 +6,14 @@
 #   /_/ \_\_| \__|_||_|_|  |_\__,_|\__|_\__|
 #  Arch Linux Post Install Setup and Config
 #-------------------------------------------------------------------------
-(
 
 echo "-------------------------------------------------"
 echo "Setting up mirrors for optimal download          "
 echo "-------------------------------------------------"
 iso=$(curl -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
-pacman -S --noconfirm pacman-contrib
+pacman -S --noconfirm pacman-contrib terminus-font
+setfont ter-v22b
 pacman -S --noconfirm reflector rsync
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
@@ -53,10 +53,6 @@ sgdisk -t 2:8300 ${DISK}
 # label partitions
 sgdisk -c 1:"UEFISYS" ${DISK}
 sgdisk -c 2:"ROOT" ${DISK}
-wipefs -a -t btrfs ${DISK}2 # removes all of the btrfs signatures and wipe partition clean 
-Conversations 
-Jump to 
- 1oves all of the btrfs signatures and wipe partition clean
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
@@ -78,7 +74,7 @@ mount -t vfat "${DISK}1" /mnt/boot/
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring --noconfirm --needed
+pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 genfstab -U /mnt >> /mnt/etc/fstab
 echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 echo "--------------------------------------"
@@ -93,9 +89,7 @@ initrd  /initramfs-linux.img
 options root=${DISK}2 rw rootflags=subvol=@
 EOF
 cp -R ~/ArchMatic /mnt/root/
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR 0-setup       --"
 echo "--------------------------------------"
-arch-chroot /mnt
-
-) 2>&1 | tee installlog.txt

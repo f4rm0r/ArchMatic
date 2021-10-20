@@ -6,13 +6,75 @@
 #   /_/ \_\_| \__|_||_|_|  |_\__,_|\__|_\__|
 #  Arch Linux Post Install Setup and Config
 #-------------------------------------------------------------------------
-source install.conf
+echo "--------------------------------------"
+echo "--          Network Setup           --"
+echo "--------------------------------------"
+pacman -S networkmanager dhclient --noconfirm --needed
+systemctl enable --now NetworkManager
+
+echo "--------------------------------------"
+echo "--      Set Password for Root       --"
+echo "--------------------------------------"
+echo "Enter password for root user: "
+passwd root
+
+if ! source install.conf; then
+	read -p "Please enter hostname:" hostname
+
+	read -p "Please enter username:" username
+echo "username=$username" >> ${HOME}/ArchMatic/install.conf
+echo "password=$password" >> ${HOME}/ArchMatic/install.conf
+fi
+
+echo "-------------------------------------------------"
+echo "Setting up mirrors for optimal download          "
+echo "-------------------------------------------------"
+pacman -S --noconfirm pacman-contrib curl
+pacman -S --noconfirm reflector rsync
+iso=$(curl -4 ifconfig.co/country-iso)
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+
+nc=$(grep -c ^processor /proc/cpuinfo)
+echo "You have " $nc" cores."
+echo "-------------------------------------------------"
+echo "Changing the makeflags for "$nc" cores."
+sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$nc"/g' /etc/makepkg.conf
+echo "Changing the compression settings for "$nc" cores."
+sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g' /etc/makepkg.conf
+
+echo "-------------------------------------------------"
+echo "       Setup Language to US and set locale       "
+echo "-------------------------------------------------"
+sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+locale-gen
+timedatectl --no-ask-password set-timezone America/Chicago
+timedatectl --no-ask-password set-ntp 1
+localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_COLLATE="" LC_TIME="en_US.UTF-8"
+
+# Set keymaps
+localectl --no-ask-password set-keymap us
+
+# Hostname
+hostnamectl --no-ask-password set-hostname $hostname
+
+# Add sudo no password rights
+sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+
+#Add parallel downloading
+sed -i 's/^#Para/Para/' /etc/pacman.conf
+
+#Enable multilib
+cat <<EOF >> /etc/pacman.conf
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+EOF
+pacman -Sy --noconfirm
+
 echo -e "\nInstalling Base System\n"
 
 PKGS=(
 'alsa-plugins' # audio plugins
 'alsa-utils' # audio utils
-'amd-ucode' # AMD CPU ucode driver
 'ark' # compression
 'audiocd-kio' 
 'autoconf' # build
@@ -56,8 +118,8 @@ PKGS=(
 'gparted' # partition management
 'gptfdisk'
 'groff'
-#'grub'
-#'grub-customizer'
+'grub'
+'grub-customizer'
 'gst-libav'
 'gst-plugins-good'
 'gst-plugins-ugly'
@@ -84,6 +146,7 @@ PKGS=(
 'kgpg'
 'khotkeys'
 'kinfocenter'
+'kitty'
 'kmenuedit'
 'kmix'
 'konsole'
@@ -116,11 +179,9 @@ PKGS=(
 'make'
 'milou'
 'nano'
-'nautilus' # GNOME file manager
 'neofetch'
 'networkmanager'
 'ntfs-3g'
-'nvidia-dkms'
 'okular'
 'openbsd-netcat'
 'openssh'
@@ -161,7 +222,6 @@ PKGS=(
 'swtpm'
 'synergy'
 'systemsettings'
-'terminator'
 'terminus-font'
 'texinfo'
 'traceroute'
@@ -194,12 +254,45 @@ for PKG in "${PKGS[@]}"; do
     sudo pacman -S "$PKG" --noconfirm --needed
 done
 
+#
+# determine processor type and install microcode
+# 
+proc_type=$(lscpu | awk '/Vendor ID:/ {print $3}')
+case "$proc_type" in
+	GenuineIntel)
+		print "Installing Intel microcode"
+		pacman -S --noconfirm intel-ucode
+		proc_ucode=intel-ucode.img
+		;;
+	AuthenticAMD)
+		print "Installing AMD microcode"
+		pacman -S --noconfirm amd-ucode
+		proc_ucode=amd-ucode.img
+		;;
+esac	
+
+# Graphics Drivers find and install
+if lspci | grep -E "NVIDIA|GeForce"; then
+    sudo cat <<EOF > /etc/pacman.d/hooks/nvidia.hook
+    [Trigger]
+    Operation=Install
+    Operation=Upgrade
+    Operation=Remove
+    Type=Package
+    Target=nvidia
+
+    [Action]
+    Depends=mkinitcpio
+    When=PostTransaction
+    Exec=/usr/bin/mkinitcpio -P
+EOF
+    pacman -S nvidia-dkms dkms --noconfirm --needed
+elif lspci | grep -E "Radeon"; then
+    pacman -S xf86-video-amdgpu --noconfirm --needed
+elif lspci | grep -E "Integrated Graphics Controller"; then
+    pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils --needed --noconfirm
+fi
 echo -e "\nDone!\n"
-
-# Blacklists Nvidia Nouveau module on boot
-
-touch /etc/modprobe.d/blacklist.conf
-echo -e "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
 
 if [ $(whoami) = "root"  ];
 then
@@ -215,8 +308,7 @@ then
     cp /etc/skel/.bashrc /home/$username/.bashrc
     chown -R $username: /home/$username
     sed -n '#/home/'"$username"'/#,s#bash#zsh#' /etc/passwd
-    su - $username
-    echo "Switched to user mode"
 else
-	echo "You are already a user proceed with aur install with 3-software-aur.sh"
+	echo "You are already a user proceed with aur installs"
 fi
+
