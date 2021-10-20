@@ -17,7 +17,7 @@ setfont ter-v22b
 pacman -S --noconfirm reflector rsync
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
-mkdir /mnt
+mkdir /dishes
 
 
 echo -e "\nInstalling prereqs...\n$HR"
@@ -29,7 +29,7 @@ echo "-------------------------------------------------"
 lsblk
 echo "Please enter disk to work on: (example /dev/sda)"
 read DISK
-echo "THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!"
+echo "THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK"
 read -p "are you sure you want to continue (Y/N):" formatdisk
 case $formatdisk in
 
@@ -57,24 +57,26 @@ sgdisk -c 2:"ROOT" ${DISK}
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 
+mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
+mkfs.btrfs -L "ROOT" "${DISK}2"
+mount -t btrfs "${DISK}2" /dishes
+btrfs subvolume create /dishes /@
+umount /dishes
+rm -r /dishes
+;;
+esac
+
 echo "--------------------------------------------------"
 echo "-----------------Select mountpoint----------------"
 echo "--------------------------------------------------"
+
 echo "Please enter mountpoint to mount disks: (Example /mnt"
 read MOUNTPOINT
 echo "THIS WILL DELETE ANY EXISTING DATA IN FOLDER!"
-read -p "are you sure you want to continue (Y/N):" mountingpoint
-case $mountingpoint in
+read -p "are you sure you want to continue (Y/N):" mountpoint
+case $mountpoint in
 
 y|Y|yes|Yes|YES)
-
-mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
-mkfs.btrfs -L "ROOT" "${DISK}2"
-mount -t btrfs "${DISK}2" ${MOUNTPOINT}
-btrfs subvolume create ${MOUNTPOINT} /@
-umount ${MOUNTPOINT}
-;;
-esac
 
 # mount target
 mount -t btrfs -o subvol=@ "${DISK}2" ${MOUNTPOINT}
@@ -100,7 +102,9 @@ initrd  /initramfs-linux.img
 options root=${DISK}2 rw rootflags=subvol=@
 EOF
 cp -R ~/ArchMatic ${MOUNTPOINT}/root/
-cp /etc/pacman.d/mirrorlist ${MOUNTPOINT}/etc/pacman.d/mirrorlist
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR 0-setup       --"
 echo "--------------------------------------"
+;;
+esac
