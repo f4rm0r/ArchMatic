@@ -29,7 +29,7 @@ echo "-------------------------------------------------"
 lsblk
 echo "Please enter disk to work on: (example /dev/sda)"
 read DISK
-echo "THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK"
+echo "THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!"
 read -p "are you sure you want to continue (Y/N):" formatdisk
 case $formatdisk in
 
@@ -60,12 +60,11 @@ echo -e "\nCreating Filesystems...\n$HR"
 echo "--------------------------------------------------"
 echo "-----------------Select mountpoint----------------"
 echo "--------------------------------------------------"
-
 echo "Please enter mountpoint to mount disks: (Example /mnt"
 read MOUNTPOINT
 echo "THIS WILL DELETE ANY EXISTING DATA IN FOLDER!"
-read -p "are you sure you want to continue (Y/N):" mountpoint
-case $mountpoint in
+read -p "are you sure you want to continue (Y/N):" mountingpoint
+case $mountingpoint in
 
 y|Y|yes|Yes|YES)
 
