@@ -79,6 +79,7 @@ case $mountpoint in
 y|Y|yes|Yes|YES)
 
 # mount target
+mkdir -p ${MOUNTPOINT}
 mount -t btrfs -o subvol=@ "${DISK}2" ${MOUNTPOINT}
 mkdir ${MOUNTPOINT}/boot
 mkdir ${MOUNTPOINT}/boot/efi
