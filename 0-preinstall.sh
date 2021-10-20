@@ -57,39 +57,51 @@ sgdisk -c 2:"ROOT" ${DISK}
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 
+echo "--------------------------------------------------"
+echo "-----------------Select mountpoint----------------"
+echo "--------------------------------------------------"
+
+echo "Please enter mountpoint to mount disks: (Example /mnt"
+read MOUNTPOINT
+echo "THIS WILL DELETE ANY EXISTING DATA IN FOLDER!"
+read -p "are you sure you want to continue (Y/N):" mountpoint
+case $mountpoint in
+
+y|Y|yes|Yes|YES)
+
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
 mkfs.btrfs -L "ROOT" "${DISK}2"
-mount -t btrfs "${DISK}2" /mnt
-btrfs subvolume create /mnt/@
-umount /mnt
+mount -t btrfs "${DISK}2" ${MOUNTPOINT}
+btrfs subvolume create ${MOUNTPOINT} /@
+umount ${MOUNTPOINT}
 ;;
 esac
 
 # mount target
-mount -t btrfs -o subvol=@ "${DISK}2" /mnt
-mkdir /mnt/boot
-mkdir /mnt/boot/efi
-mount -t vfat "${DISK}1" /mnt/boot/
+mount -t btrfs -o subvol=@ "${DISK}2" ${MOUNTPOINT}
+mkdir ${MOUNTPOINT}/boot
+mkdir ${MOUNTPOINT}/boot/efi
+mount -t vfat "${DISK}1" ${MOUNTPOINT}/boot/
 
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
-genfstab -U /mnt >> /mnt/etc/fstab
-echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
+pacstrap ${MOUNTPOINT} base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
+genfstab -U ${MOUNTPOINT} >> ${MOUNTPOINT}/etc/fstab
+echo "keyserver hkp://keyserver.ubuntu.com" >> ${MOUNTPOINT}/etc/pacman.d/gnupg/gpg.conf
 echo "--------------------------------------"
 echo "-- Bootloader Systemd Installation  --"
 echo "--------------------------------------"
 bootctl install --esp-path=/mnt/boot
-[ ! -d "/mnt/boot/loader/entries" ] && mkdir -p /mnt/boot/loader/entries
+[ ! -d "/mnt/boot/loader/entries" ] && mkdir -p ${MOUNTPOINT}/boot/loader/entries
 cat <<EOF > /mnt/boot/loader/entries/arch.conf
 title Arch Linux  
 linux /vmlinuz-linux  
 initrd  /initramfs-linux.img  
 options root=${DISK}2 rw rootflags=subvol=@
 EOF
-cp -R ~/ArchMatic /mnt/root/
-cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+cp -R ~/ArchMatic ${MOUNTPOINT}/root/
+cp /etc/pacman.d/mirrorlist ${MOUNTPOINT}/etc/pacman.d/mirrorlist
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR 0-setup       --"
 echo "--------------------------------------"
