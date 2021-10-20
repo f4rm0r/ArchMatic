@@ -41,9 +41,9 @@ PKGS=(
 'sddm-nordic-theme-git'
 'ocs-url' # install packages from websites
 'timeshift-bin'
-'ttf-meslo' # Nerdfont package
 'ttf-droid'
 'ttf-hack'
+'ttf-meslo' # Nerdfont package
 'ttf-roboto'
 'zoom' # video conferences
 
